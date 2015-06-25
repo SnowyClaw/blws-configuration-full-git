@@ -1,0 +1,40 @@
+#!/bin/bash
+
+theme="Lucario\ and\ Riolu"
+snd="canberra-gtk-play -i dialog-"
+
+already(){
+${snd}warning &
+ch=`zenity --list --title="Remove Theme" --text="The theme is already installed. Do you want to <b>remove</b> it?" --column="" --column="" --radiolist FALSE "Yes" TRUE "No"`
+if [ "$ch" == "Yes" ]; then
+  ${snd}question &
+  gksudo --message "Please enter your password to remove the theme." "rm -R /usr/share/sounds/\"$theme\""
+  if [ $? -eq 0 ]; then
+  gsettings set org.gnome.desktop.sound theme-name 'ubuntu'
+  ${snd}information &
+  zenity --info --title="Done" --text="The removal has finished."
+  exit
+  fi
+  gsettings set org.gnome.desktop.sound theme-name "$theme"
+  ${snd}error &
+  zenity --error --title="Error" --text="Something has gone wrong with the removal."
+  exit
+fi
+exit
+}
+
+if [ -e '/usr/share/sounds/\"$theme\"' ]; then
+  already
+fi
+${snd}question &
+gksudo --message "Please enter your password to finish the install." "sh -c 'cp -R $theme /usr/share/sounds/; chmod -R a=rwx /usr/share/sounds/$theme'"
+if [ $? -eq 0 ]; then
+  gsettings set org.gnome.desktop.sound theme-name "$theme"
+  ${snd}information &
+  zenity --info --title="Done" --text="The install has finished."
+  exit
+fi
+gsettings set org.gnome.desktop.sound theme-name 'ubuntu'
+${snd}error &
+zenity --error --title="Error" --text="Something has gone wrong with the install."
+exit

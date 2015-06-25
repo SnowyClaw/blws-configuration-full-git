@@ -1,0 +1,6 @@
+[Sound Theme]
+Name=LucarioAndRiolu
+Directories=stereo
+
+[stereo]
+OutputProfile=stereo
